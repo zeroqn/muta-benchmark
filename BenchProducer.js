@@ -1,4 +1,5 @@
-const { Muta, AssetService, utils } = require("muta-sdk");
+const { Muta, utils } = require("muta-sdk");
+const { AssetService } = require("@mutajs/service");
 const randomBytes = require("randombytes");
 
 const query = `mutation ( $inputRaw: InputRawTransaction! $inputEncryption: InputTransactionEncryption! ) { sendTransaction(inputRaw: $inputRaw, inputEncryption: $inputEncryption) }`;
@@ -17,7 +18,7 @@ class AssetBench {
     const muta = new Muta({
       chainId,
       timeoutGap: gap,
-      endpoint: url
+      endpoint: Array.isArray(url) ? url[0] : url
     });
 
     this.client = muta.client();
@@ -39,7 +40,7 @@ class AssetBench {
       name: Math.random().toString(),
       precision: 0
     });
-    this.assetId = asset.response.ret.id;
+    this.assetId = asset.response.response.succeedData.id;
     await this.client.waitForNextNBlock(1);
     return asset;
   }
@@ -57,7 +58,7 @@ class AssetBench {
         asset_id: this.assetId,
         user: this.account.address
       })
-      .then(res => res.ret.balance);
+      .then(res => res.succeedData.balance);
   }
 
   async end() {
@@ -71,7 +72,7 @@ class AssetBench {
         asset_id: this.assetId,
         user: this.account.address
       })
-      .then(res => res.ret.balance);
+      .then(res => res.succeedData.balance);
 
     const blocks = {};
     for (let height = this.startBlock; height <= this.endBlock; height++) {

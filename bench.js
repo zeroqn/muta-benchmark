@@ -1,4 +1,4 @@
-const autocannon = require("autocannon");
+const autocannon = require("@homura/autocannon");
 const ora = require("ora");
 const Table = require("cli-table3");
 const logger = require("./logger");
@@ -86,7 +86,7 @@ async function runMain(assetBenchProducer, workers, options) {
           .forEach(([id, info]) => {
             benchDetail.blocks.push([parseInt(id), info.transactionsCount, info.round]);
           });
-        console.log(JSON.stringify(benchDetail, null, 2));
+        console.log(JSON.stringify(benchDetail));
       }
     });
 
