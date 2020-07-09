@@ -1,5 +1,5 @@
-const { Muta, utils } = require("muta-sdk");
-const { AssetService } = require("@mutajs/service");
+const { Muta, utils } = require("@mutadev/muta-sdk");
+const { AssetService } = require("@mutadev/service");
 const randomBytes = require("randombytes");
 
 const query = `mutation ( $inputRaw: InputRawTransaction! $inputEncryption: InputTransactionEncryption! ) { sendTransaction(inputRaw: $inputRaw, inputEncryption: $inputEncryption) }`;
@@ -34,7 +34,7 @@ class AssetBench {
   }
 
   async createAsset() {
-    const asset = await this.service.create_asset({
+    const asset = await this.service.write.create_asset({
       supply: 99999999,
       symbol: Math.random().toString(),
       name: Math.random().toString(),
