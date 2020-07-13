@@ -18,7 +18,7 @@ class AssetBench {
     const muta = new Muta({
       chainId,
       timeoutGap: gap,
-      endpoint: Array.isArray(url) ? url[0] : url
+      endpoint: Array.isArray(url) ? url[0] : url,
     });
 
     this.client = muta.client();
@@ -38,7 +38,7 @@ class AssetBench {
       supply: 99999999,
       symbol: Math.random().toString(),
       name: Math.random().toString(),
-      precision: 0
+      precision: 0,
     });
     this.assetId = asset.response.response.succeedData.id;
     await this.client.waitForNextNBlock(1);
@@ -53,7 +53,7 @@ class AssetBench {
   async start() {
     this.startTime = Date.now();
     this.startBlock = await this.client.getLatestBlockHeight();
-    this.startBalance = await this.service
+    this.startBalance = await this.service.read
       .get_balance({
         asset_id: this.assetId,
         user: this.account.address
@@ -67,12 +67,12 @@ class AssetBench {
     await this.client.waitForNextNBlock(1);
 
     this.endBlock = await this.client.getLatestBlockHeight();
-    this.endBalance = await this.service
+    this.endBalance = await this.service.read
       .get_balance({
         asset_id: this.assetId,
-        user: this.account.address
+        user: this.account.address,
       })
-      .then(res => res.succeedData.balance);
+      .then((res) => res.succeedData.balance);
 
     const blocks = {};
     for (let height = this.startBlock; height <= this.endBlock; height++) {
@@ -81,7 +81,7 @@ class AssetBench {
       blocks[height] = {
         round: Number(res.getBlock.header.proof.round),
         timeStamp: hexToTimestamp(res.getBlock.header.timestamp),
-        transactionsCount: res.getBlock.orderedTxHashes.length
+        transactionsCount: res.getBlock.orderedTxHashes.length,
       };
     }
 
@@ -91,7 +91,7 @@ class AssetBench {
       blockUsage: this.endBlock - this.startBlock - 1,
       transferProcessed: this.startBalance - this.endBalance,
 
-      blocks
+      blocks,
     };
   }
 
@@ -111,14 +111,14 @@ class AssetBench {
         nonce: `0x${randomBytes(32).toString("hex")}`,
         chainId: `${chainId}`,
         cyclesPrice: "0x01",
-        cyclesLimit: "0x5208"
+        cyclesLimit: "0x5208",
       },
       this.account._privateKey
     );
 
     return JSON.stringify({
       query,
-      variables
+      variables,
     });
   }
 }
