@@ -103,7 +103,7 @@ function runWorker() {
   const workerData = JSON.parse(process.env.WORKER_DATA);
   const options = JSON.parse(process.env.OPTIONS);
 
-  const payload = JSON.stringify({ asset_id: workerData.assetId, to: workerData.to, value: 1 });
+  const payload = JSON.stringify({ asset_id: workerData.assetId, to: workerData.to, value: 1, memo: "Hello" });
 
   function getBody() {
     const variables = utils.signTransaction(
@@ -115,8 +115,8 @@ function runWorker() {
         nonce: `0x${randomBytes(32).toString("hex")}`,
         chainId: `${workerData.chainId}`,
         cyclesPrice: "0x01",
-        cyclesLimit: "0x5208",
-        sender: workerData.sender,
+        cyclesLimit: "0xffffffff",
+        sender: workerData.sender
       },
       Buffer.from(workerData.privateKey, "hex")
     );

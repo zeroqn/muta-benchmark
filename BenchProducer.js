@@ -36,9 +36,10 @@ class AssetBench {
   async createAsset() {
     const asset = await this.service.write.create_asset({
       supply: 99999999,
-      symbol: Math.random().toString(),
-      name: Math.random().toString(),
+      symbol: "M" + (Math.random() * 1e8).toString().substring(0, 4),
+      name: "M" + (Math.random() * 1e8).toString().substring(0, 4),
       precision: 0,
+      relayable: false
     });
     this.assetId = asset.response.response.succeedData.id;
     await this.client.waitForNextNBlock(1);
@@ -70,7 +71,7 @@ class AssetBench {
     this.endBalance = await this.service.read
       .get_balance({
         asset_id: this.assetId,
-        user: this.account.address,
+        user: this.account.address
       })
       .then((res) => res.succeedData.balance);
 
@@ -81,7 +82,7 @@ class AssetBench {
       blocks[height] = {
         round: Number(res.getBlock.header.proof.round),
         timeStamp: hexToTimestamp(res.getBlock.header.timestamp),
-        transactionsCount: res.getBlock.orderedTxHashes.length,
+        transactionsCount: res.getBlock.orderedTxHashes.length
       };
     }
 
@@ -91,7 +92,7 @@ class AssetBench {
       blockUsage: this.endBlock - this.startBlock - 1,
       transferProcessed: this.startBalance - this.endBalance,
 
-      blocks,
+      blocks
     };
   }
 
@@ -106,19 +107,20 @@ class AssetBench {
       {
         serviceName: "asset",
         method: "transfer",
-        payload: JSON.stringify({ asset_id: assetId, to: to, value: 1 }),
+        payload: JSON.stringify({ asset_id: assetId, to: to, value: 1, memo: "hello" }),
         timeout: timeout,
         nonce: `0x${randomBytes(32).toString("hex")}`,
         chainId: `${chainId}`,
         cyclesPrice: "0x01",
-        cyclesLimit: "0x5208",
+        cyclesLimit: "0xfffffff",
+        sender: this.account.address
       },
       this.account._privateKey
     );
 
     return JSON.stringify({
       query,
-      variables,
+      variables
     });
   }
 }
